@@ -58,6 +58,10 @@ body {
     font-size: 13px;
 }
 
+.list {
+    margin-bottom: 3px;
+}
+
 .nav-item svg {
     margin-right: 10px;
 }
@@ -75,17 +79,43 @@ body {
     margin-left: 71px;
 }
 
-.categories:hover svg {
+.categories:not(.collapsed) svg {
     transform: rotate(90deg);
 }
 
-.nav-item:hover ul{
-    border: 1px solid #0D6EFD;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+.categories:not(.collapsed) svg path {
+    fill: #fff;
 }
 
-.nav-item .collapse ul{
+.categories.collapsed {
+    border-radius: 8px;
+}
+
+.categories:not(.collapsed) {
+    background-color: #0D6EFD;
+    color: #fff;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.categories-collapse ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.categories-collapse {
+    z-index: -1;
+    margin-top: -5px;
+}
+
+.nav-item ul {
+    border: 1px solid #0D6EFD;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.nav-item .collapse ul {
     margin: 0;
 }
 
@@ -250,6 +280,7 @@ form .btn-primary {
 
 .content {
     padding-left: 60px;
+    flex-grow: 1;
 }
 
 .main-title {
@@ -297,7 +328,7 @@ form .btn-primary {
 .diagrams {
     display: flex;
     justify-content: space-between;
-    width: 50%;
+    /* width: 50%; */
 }
 
 .diagram {
@@ -305,7 +336,7 @@ form .btn-primary {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0 84px;
+    /* margin: 0 84px; */
     padding-bottom: 173px;
     width: 50%;
 }
