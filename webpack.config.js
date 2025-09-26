@@ -11,10 +11,26 @@ module.exports = {
     },
     devServer: {
         static: {
-            directory: path.join(__dirname, 'public'),
+            directory: path.join(__dirname, 'dist'),
         },
         compress: true,
         port: 9000,
+        historyApiFallback: true,
+        devMiddleware: {
+            writeToDisk: true,
+        }
+    },
+    module: {
+        rules: [
+            {
+                test: /\.(scss|css)$/,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "sass-loader",
+                ],
+            },
+        ],
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -23,8 +39,11 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: "./src/templates", to: "templates" },
-                { from: "./static/fonts", to: "fonts" },
-                { from: "./static/images", to: "images" },
+                { from: "./src/styles", to: "styles" },
+                { from: "./static/fonts", to: "static/fonts" },
+                { from: "./static/images", to: "static/images" },
+                { from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "css" },
+                { from: "./node_modules/bootstrap/dist/js/bootstrap.min.js", to: "js" },
             ],
         }),
     ],

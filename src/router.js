@@ -24,7 +24,6 @@ export class Router {
                 title: 'Главная',
                 filePathTemplate: 'templates/index.html',
                 useLayout: 'templates/layout.html',
-                styles: 'styles/styles.css',
                 load: () => {
                     new Index();
                 },
@@ -33,9 +32,8 @@ export class Router {
                 route: '/registration',
                 title: 'Регистрация',
                 filePathTemplate: 'templates/registration.html',
-                styles: 'styles/styles.css',
                 load: () => {
-                    new Registration();
+                    new Registration(this.openNewRoute.bind(this));
                 },
                 useLayout: false,
             },
@@ -43,9 +41,8 @@ export class Router {
                 route: '/login',
                 title: 'Вход',
                 filePathTemplate: 'templates/login.html',
-                styles: 'styles/styles.css',
                 load: () => {
-                    new Login();
+                    new Login(this.openNewRoute.bind(this));
                 },
                 useLayout: false,
             },
@@ -55,9 +52,8 @@ export class Router {
                 filePathTemplate: 'templates/income.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new Income();
+                    new Income(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/create-income-cat',
@@ -65,9 +61,8 @@ export class Router {
                 filePathTemplate: 'templates/create-income-cat.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new CreateIncome();
+                    new CreateIncome(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/edit-income-cat',
@@ -75,9 +70,8 @@ export class Router {
                 filePathTemplate: 'templates/edit-income-cat.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new EditIncome();
+                    new EditIncome(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/expenses',
@@ -85,9 +79,8 @@ export class Router {
                 filePathTemplate: 'templates/expenses.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new Expenses();
+                    new Expenses(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/create-expense-cat',
@@ -95,9 +88,8 @@ export class Router {
                 filePathTemplate: 'templates/creat-expense-cat.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new CreateExpense();
+                    new CreateExpense(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/edit-expense-cat',
@@ -105,18 +97,16 @@ export class Router {
                 filePathTemplate: 'templates/edit-expense-cat.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new EditExpense();
+                    new EditExpense(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/operations',
                 title: 'Доходы и Расходы',
                 filePathTemplate: 'templates/operations.html',
                 useLayout: 'templates/layout.html',
-                styles: 'styles/styles.css',
                 load: () => {
-                    new Operations();
+                    new Operations(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -125,9 +115,8 @@ export class Router {
                 filePathTemplate: 'templates/create-operations.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new CreateOperations();
+                    new CreateOperations(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/edit-operations',
@@ -135,9 +124,8 @@ export class Router {
                 filePathTemplate: 'templates/edit-operations.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new EditOperations();
+                    new EditOperations(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
             {
                 route: '/layout',
@@ -145,9 +133,8 @@ export class Router {
                 filePathTemplate: 'templates/layout.html',
                 useLayout: 'templates/layout.html',
                 load: () => {
-                    new Layout();
+                    new Layout(this.openNewRoute.bind(this));
                 },
-                styles: 'styles/styles.css',
             },
         ];
     }
@@ -155,6 +142,30 @@ export class Router {
     initEvents() {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
+        window.addEventListener('click', this.clickHandler.bind(this));
+    }
+
+    async openNewRoute(url) {
+        const currentRoute = window.location.pathname;
+        history.pushState({}, '', url);
+        await this.activateRoute(null, currentRoute);
+    }
+
+    async clickHandler(e) {
+        let element = null;
+        if (e.target.nodeName === 'A') {
+            element = e.target;
+        } else if (e.target.parentNode.nodeName === 'A') {
+            element = e.target.parentNode;
+        }
+        if (element) {
+            e.preventDefault();
+            const url = element.href.replace(window.location.origin, '');
+            if (!url || url === '/#' || url.startsWith('javascript:void(0)')) {
+                return;
+            }
+            await this.openNewRoute(url);
+        }
     }
 
     async activateRoute() {
