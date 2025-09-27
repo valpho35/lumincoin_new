@@ -1,5 +1,5 @@
 export class CreateExpense {
     constructor() {
-        console.log(СоздатьРасход);
+        // console.log(СоздатьРасход);
     }
 }

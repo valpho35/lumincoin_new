@@ -1,5 +1,5 @@
 export class EditExpense {
     constructor() {
-        console.log(РедактироватьРасход);
+        // console.log(РедактироватьРасход);
     }
 }

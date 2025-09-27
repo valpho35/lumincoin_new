@@ -1,5 +1,5 @@
 export class CreateOperations {
     constructor() {
-        console.log(СоздатьОперацию);
+        // console.log(СоздатьОперацию);
     }
 }

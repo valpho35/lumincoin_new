@@ -39,7 +39,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: "./src/templates", to: "templates" },
-                { from: "./src/styles", to: "styles" },
+                { from: "./src/styles/styles.css", to: "styles" },
                 { from: "./static/fonts", to: "static/fonts" },
                 { from: "./static/images", to: "static/images" },
                 { from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "css" },

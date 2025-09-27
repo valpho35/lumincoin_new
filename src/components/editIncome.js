@@ -1,5 +1,5 @@
 export class EditIncome {
     constructor() {
-        console.log(РедактироватьДоход);
+        // console.log(РедактироватьДоход);
     }
 }

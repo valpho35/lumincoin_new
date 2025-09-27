@@ -1,5 +1,5 @@
 export class Registration {
     constructor() {
-        console.log(Регистрация);
+        // console.log(Регистрация);
     }
 }

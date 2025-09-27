@@ -1,5 +1,5 @@
 export class EditOperations {
     constructor() {
-        console.log(РедактироватьОперацию);
+        // console.log(РедактироватьОперацию);
     }
 }

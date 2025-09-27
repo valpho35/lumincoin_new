@@ -22,8 +22,8 @@ export class Router {
             {
                 route: '/',
                 title: 'Главная',
-                filePathTemplate: 'templates/index.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/index.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Index();
                 },
@@ -31,7 +31,7 @@ export class Router {
             {
                 route: '/registration',
                 title: 'Регистрация',
-                filePathTemplate: 'templates/registration.html',
+                filePathTemplate: '/templates/registration.html',
                 load: () => {
                     new Registration(this.openNewRoute.bind(this));
                 },
@@ -40,7 +40,7 @@ export class Router {
             {
                 route: '/login',
                 title: 'Вход',
-                filePathTemplate: 'templates/login.html',
+                filePathTemplate: '/templates/login.html',
                 load: () => {
                     new Login(this.openNewRoute.bind(this));
                 },
@@ -49,8 +49,8 @@ export class Router {
             {
                 route: '/income',
                 title: 'Доходы',
-                filePathTemplate: 'templates/income.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/income.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Income(this.openNewRoute.bind(this));
                 },
@@ -58,8 +58,8 @@ export class Router {
             {
                 route: '/create-income-cat',
                 title: 'Создание категории доходов',
-                filePathTemplate: 'templates/create-income-cat.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/create-income-cat.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new CreateIncome(this.openNewRoute.bind(this));
                 },
@@ -67,8 +67,8 @@ export class Router {
             {
                 route: '/edit-income-cat',
                 title: 'Редактирование категории доходов',
-                filePathTemplate: 'templates/edit-income-cat.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/edit-income-cat.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new EditIncome(this.openNewRoute.bind(this));
                 },
@@ -76,8 +76,8 @@ export class Router {
             {
                 route: '/expenses',
                 title: 'Расходы',
-                filePathTemplate: 'templates/expenses.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/expenses.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Expenses(this.openNewRoute.bind(this));
                 },
@@ -85,8 +85,8 @@ export class Router {
             {
                 route: '/create-expense-cat',
                 title: 'Создание категрии расходов',
-                filePathTemplate: 'templates/creat-expense-cat.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/creat-expense-cat.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new CreateExpense(this.openNewRoute.bind(this));
                 },
@@ -94,8 +94,8 @@ export class Router {
             {
                 route: '/edit-expense-cat',
                 title: 'Редактирование категории расходов',
-                filePathTemplate: 'templates/edit-expense-cat.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/edit-expense-cat.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new EditExpense(this.openNewRoute.bind(this));
                 },
@@ -103,8 +103,8 @@ export class Router {
             {
                 route: '/operations',
                 title: 'Доходы и Расходы',
-                filePathTemplate: 'templates/operations.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/operations.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Operations(this.openNewRoute.bind(this));
                 },
@@ -112,8 +112,8 @@ export class Router {
             {
                 route: '/create-operations',
                 title: 'Создание дохода/расхода',
-                filePathTemplate: 'templates/create-operations.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/create-operations.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new CreateOperations(this.openNewRoute.bind(this));
                 },
@@ -121,8 +121,8 @@ export class Router {
             {
                 route: '/edit-operations',
                 title: 'Редактирование дохода/расхода',
-                filePathTemplate: 'templates/edit-operations.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/edit-operations.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new EditOperations(this.openNewRoute.bind(this));
                 },
@@ -130,8 +130,8 @@ export class Router {
             {
                 route: '/layout',
                 title: 'Сайдбар',
-                filePathTemplate: 'templates/layout.html',
-                useLayout: 'templates/layout.html',
+                filePathTemplate: '/templates/layout.html',
+                useLayout: '/templates/layout.html',
                 load: () => {
                     new Layout(this.openNewRoute.bind(this));
                 },
@@ -178,7 +178,12 @@ export class Router {
             }
 
             if (newRoute.filePathTemplate) {
-                this.contentPageElement.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
+                let contentBlock = this.contentPageElement;
+                if (newRoute.useLayout) {
+                    this.contentPageElement.innerHTML = await fetch(newRoute.useLayout).then(response => response.text());
+                    contentBlock = document.getElementById('content-layout');
+                }
+                contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
             }
 
             if (newRoute.load && typeof newRoute.load === 'function') {

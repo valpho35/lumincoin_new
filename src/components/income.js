@@ -1,5 +1,5 @@
 export class Income {
     constructor() {
-        console.log(Доходы);
+        // console.log(Доходы);
     }
 }
