@@ -7,7 +7,7 @@
             <ul class="nav flex-column">
                 <li class="nav-item list">
                     <a class="nav-link d-flex align-items-center rounded-3 px-3" data-bs-toggle="collapse"
-                        href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        href="/" role="button" aria-expanded="false" aria-controls="collapseExample">
                         <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M1.5 12.3964V5.89641H2.5V12.3964C2.5 12.6726 2.72386 12.8964 3 12.8964H12C12.2761 12.8964 12.5 12.6726 12.5 12.3964V5.89641H13.5V12.3964C13.5 13.2248 12.8284 13.8964 12 13.8964H3C2.17157 13.8964 1.5 13.2248 1.5 12.3964Z"
@@ -24,7 +24,7 @@
                 </li>
                 <li class="nav-item list">
                     <a class="nav-link d-flex align-items-center rounded-3 px-3" data-bs-toggle="collapse"
-                        href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        href="/operations" role="button" aria-expanded="false" aria-controls="collapseExample">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M11 15C13.2091 15 15 13.2091 15 11C15 8.79086 13.2091 7 11 7C8.79086 7 7 8.79086 7 11C7 13.2091 8.79086 15 11 15ZM16 11C16 13.7614 13.7614 16 11 16C8.23858 16 6 13.7614 6 11C6 8.23858 8.23858 6 11 6C13.7614 6 16 8.23858 16 11Z"
@@ -43,8 +43,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center px-3 categories collapsed" data-bs-toggle="collapse"
-                        href="#categoriesCollapse" role="button" aria-expanded="false"
+                    <a class="nav-link d-flex align-items-center px-3 categories collapsed" 
+                        data-bs-target="#categoriesCollapse" data-bs-toggle="collapse"
+                        role="button" aria-expanded="false"
                         aria-controls="categoriesCollapse">
                         Категории
                         <svg width="7" height="14" viewBox="0 0 7 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,10 +57,10 @@
                     <div class="collapse categories-collapse" id="categoriesCollapse">
                         <ul class="flex-column">
                             <li class="nav-item">
-                                <a class="nav-link px-3" href="#">Доходы</a>
+                                <a class="nav-link px-3" href="/income">Доходы</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link px-3" href="#">Расходы</a>
+                                <a class="nav-link px-3" href="/expenses">Расходы</a>
                             </li>
                         </ul>
                     </div>

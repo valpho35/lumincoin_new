@@ -32,6 +32,10 @@ body {
     min-height: 100vh;
 }
 
+#content-layout {
+    flex-grow: 1;
+}
+
 .sidebar {
     width: 219px;
     flex-shrink: 0;
@@ -280,7 +284,8 @@ form .btn-primary {
 
 .content {
     padding-left: 60px;
-    flex-grow: 1;
+    padding-right: 60px;
+    /* flex-grow: 1; */
 }
 
 .main-title {
