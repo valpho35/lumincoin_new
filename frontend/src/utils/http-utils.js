@@ -28,7 +28,7 @@ export class HttpUtils {
             return result;
         }
 
-        if (response.status <200 || response.status >=300) {
+        if (response.status < 200 || response.status >= 300) {
             result.error = true;
         }
 

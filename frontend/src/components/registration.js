@@ -1,11 +1,13 @@
 import { AuthUtils } from "../utils/auth-utils";
+import { HttpUtils } from "../utils/http-utils";
 export class Registration {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
 
-        if (AuthUtils.getAuthInfo('accessToken')) {
-            return this.openNewRoute('/');
+        if (AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
+            return this.openNewRoute('/login');
         }
+        
 
         this.nameElement = document.getElementById('name');
         this.lastNameElement = document.getElementById('last-name');
@@ -62,30 +64,22 @@ export class Registration {
         event.preventDefault();
         this.commonErrorElement.style.display = 'none';
         if (this.validateForm()) {
-            const response = await fetch('http://localhost:3000/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'applicaion/json',
-                },
-                body: JSON.stringify({
-                    name: this.nameElement.value,
-                    lastName: this.lastNameElement.value,
-                    email: this.emailElement.value,
-                    password: this.passwordElement.value,
-                })
+            const result = await HttpUtils.request('/signup', 'POST', {
+                name: this.nameElement.value,
+                lastName: this.lastNameElement.value,
+                email: this.emailElement.value,
+                password: this.passwordElement.value,
+                passwordRepeat: this.confirmPasswordElement.value,
             });
 
-            const result = await response.json();
-            if (result.error || !result.user.id || !result.user.name || !result.user.lastName || !result.user.email) {
+            if (result.error || !result.response || (result.response && (!result.response.user.id || !result.response.user.name || !result.response.user.lastName || !result.response.user.email))) {
                 this.commonErrorElement.style.display = 'block';
                 return;
             }
 
-            AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken, {id: result.user.id, name: result.user.name, lastName: result.user.lastName, email: result.user.email});
-           
             this.openNewRoute('/login');
+
+            // AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, { id: result.response.user.id, name: result.response.user.name, lastName: result.response.user.lastName, email: result.response.user.email });
         }
     }
-
 }

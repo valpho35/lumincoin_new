@@ -47,12 +47,12 @@ export class Login {
                 rememberMe: this.rememberMeElement.checked
             });
 
-            if (result.error || !result.response || (result.response && (!result.response.accessToken || !result.response.refreshToken || !result.response.user.id || !result.response.user.name))) {
+            if (result.error || !result.response || (result.response && (!result.response.tokens.accessToken || !result.response.tokens.refreshToken || !result.response.user.id || !result.response.user.name || !result.response.user.lastName))) {
                 this.commonErrorElement.style.display = 'block';
                 return;
             }
 
-            AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken, { id: result.user.id, name: result.user.name });
+            AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, { id: result.response.user.id, name: result.response.user.name, lastName: result.response.user.lastName });
 
             this.openNewRoute('/');
         }
