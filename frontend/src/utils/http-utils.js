@@ -1,4 +1,5 @@
 import config from "../config/common-config";
+import { AuthUtils } from "./auth-utils.js";
 
 export class HttpUtils {
     static async request(url, method = 'GET', body = null, useToken) {
@@ -22,6 +23,12 @@ export class HttpUtils {
         let response = null;
         try {
             response = await fetch(config.api + url, params);
+
+            if (response.status === 401) {
+                this.handleUnauthorized();
+                result.error = true;
+                return result;
+            }
             result.response = await response.json();
         } catch (e) {
             result.error = true;
@@ -33,5 +40,17 @@ export class HttpUtils {
         }
 
         return result;
+    }
+
+    if(useToken) {
+        const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
+        if (token) {
+            params.headers['Authoriazaion'] = `Bearer ${token}`;
+        }
+    }
+
+    static handleUnauthorized() {
+        AuthUtils.removeAuthInfo();
+        window.location.href = '/login';
     }
 }

@@ -12,12 +12,15 @@ import { CreateOperations } from "./components/createOperations.js";
 import { EditOperations } from "./components/editOperations.js";
 import { Layout } from "./components/layout.js";
 import { Logout } from "./components/logout.js";
+import { VisualUtils } from "./utils/visual-utils.js";
+import { AuthUtils } from "./utils/auth-utils.js";
 
 
 export class Router {
     constructor() {
         this.titlePageElement = document.getElementById('title');
         this.contentPageElement = document.getElementById('content');
+        this.navElement = document.querySelector('nav');
 
         this.initEvents();
         this.routes = [
@@ -29,6 +32,7 @@ export class Router {
                 load: () => {
                     new Index();
                 },
+                authRequired: true
             },
             {
                 route: '/registration',
@@ -38,6 +42,7 @@ export class Router {
                     new Registration(this.openNewRoute.bind(this));
                 },
                 useLayout: false,
+                authRequired: false
             },
             {
                 route: '/login',
@@ -47,6 +52,7 @@ export class Router {
                     new Login(this.openNewRoute.bind(this));
                 },
                 useLayout: false,
+                authRequired: false
             },
             {
                 route: '/income',
@@ -56,6 +62,7 @@ export class Router {
                 load: () => {
                     new Income(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/create-income-cat',
@@ -65,6 +72,7 @@ export class Router {
                 load: () => {
                     new CreateIncome(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/edit-income-cat',
@@ -74,6 +82,7 @@ export class Router {
                 load: () => {
                     new EditIncome(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/expenses',
@@ -83,15 +92,17 @@ export class Router {
                 load: () => {
                     new Expenses(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/create-expense-cat',
                 title: 'Создание категрии расходов',
-                filePathTemplate: '/templates/creat-expense-cat.html',
+                filePathTemplate: '/templates/create-expense-cat.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
                     new CreateExpense(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/edit-expense-cat',
@@ -101,6 +112,7 @@ export class Router {
                 load: () => {
                     new EditExpense(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/operations',
@@ -110,6 +122,7 @@ export class Router {
                 load: () => {
                     new Operations(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/create-operations',
@@ -119,6 +132,7 @@ export class Router {
                 load: () => {
                     new CreateOperations(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/edit-operations',
@@ -128,6 +142,7 @@ export class Router {
                 load: () => {
                     new EditOperations(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/layout',
@@ -137,12 +152,14 @@ export class Router {
                 load: () => {
                     new Layout(this.openNewRoute.bind(this));
                 },
+                authRequired: true
             },
             {
                 route: '/logout',
                 load: () => {
                     new Logout(this.openNewRoute.bind(this));
-                }
+                },
+                authRequired: false
             }
         ];
     }
@@ -160,19 +177,14 @@ export class Router {
     }
 
     async clickHandler(e) {
-        let element = null;
-        if (e.target.nodeName === 'A') {
-            element = e.target;
-        } else if (e.target.parentNode.nodeName === 'A') {
-            element = e.target.parentNode;
-        }
-        if (element) {
-            e.preventDefault();
-            const url = element.href.replace(window.location.origin, '');
-            if (!url || url === '/#' || url.startsWith('javascript:void(0)')) {
-                return;
-            }
-            await this.openNewRoute(url);
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        e.preventDefault();
+
+        const href = link.getAttribute('href');
+        if (href && href !== 'javascript:void(0)') {
+            await this.openNewRoute(href);
         }
     }
 
@@ -194,12 +206,34 @@ export class Router {
                 contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
             }
 
+            if (newRoute) {
+                if (newRoute.authRequired && !this.isAuthenticated()) {
+                    console.log('need to login in');
+                    this.openNewRoute('/login');
+                    return;
+                }
+                if ((urlRoute === '/login' || urlRoute === '/registration') && this.isAuthenticated()) {
+                    this.openNewRoute('/');
+                    return;
+                }
+            }
+
+            setTimeout(() => {
+                VisualUtils.SidebarMenu(newRoute.route);
+                VisualUtils.initBootstrap();
+            }, 150);
+
             if (newRoute.load && typeof newRoute.load === 'function') {
                 newRoute.load();
-            } 
+            }
         } else {
             console.log('Необходимо авторизоваться!');
             window.location = '/login';
         }
+    }
+
+    isAuthenticated() {
+        const accessToken = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
+        return !!accessToken;
     }
 }

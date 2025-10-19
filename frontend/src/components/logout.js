@@ -4,18 +4,20 @@ import { HttpUtils } from "../utils/http-utils";
 export class Logout {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
-
-        if (!AuthUtils.getAuthInfo(AuthUtils.accessTokenKey) || !AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey)) {
-            return this.openNewRoute('/login');
-        }
-
-        this.logout().then;
+        this.logout();
     }
 
     async logout() {
-        await HttpUtils.request('/logout', 'POST', {
-            refreshToken: AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey),
-        });
+        const refreshToken = AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey);
+
+        if (refreshToken) {
+            try {
+                await HttpUtils.request('/logout', 'POST', {
+                    refreshToken: refreshToken,
+                });
+            } catch (error) {
+            }
+        }
 
         AuthUtils.removeAuthInfo();
 
@@ -23,3 +25,15 @@ export class Logout {
     }
 }
 
+
+// export class Logout {
+//     constructor(openNewRoute) {
+//         this.openNewRoute = openNewRoute;
+//         this.logout();
+//     }
+
+//     logout() {
+//         AuthUtils.removeAuthInfo();
+//         this.openNewRoute('/login');
+//     }
+// }

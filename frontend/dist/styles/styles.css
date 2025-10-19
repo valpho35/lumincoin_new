@@ -11,7 +11,6 @@
 @font-face {
     font-family: 'RobotoMedium';
     src: url(/static/fonts/Robotomedium.woff);
-    /* font-weight: bold; */
 }
 
 body {
@@ -75,8 +74,17 @@ body {
     color: #fff;
 }
 
-.nav-item:hover svg path {
+.nav-item a:hover svg path {
     fill: #fff;
+}
+
+.nav-item .active svg path {
+    fill: #fff;
+}
+
+.cat-list a {
+    text-align: start;
+    color: #0D6EFD;
 }
 
 .categories svg {
@@ -203,17 +211,24 @@ a {
     position: absolute;
     bottom: 0;
     width: 200px;
-    color: #052C65;
     border-top: 1px solid #D9D9D9;
     font-size: 14px;
     line-height: 24px;
 }
 
+.user a {
+    color: #052C65;
+}
+
 .user svg {
     margin-right: 16px;
+    padding-right: 0;
+
 }
 
 .container {
+    height: 100vh;
+    justify-content: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -285,7 +300,6 @@ form .btn-primary {
 .content {
     padding-left: 60px;
     padding-right: 60px;
-    /* flex-grow: 1; */
 }
 
 .main-title {
@@ -333,7 +347,6 @@ form .btn-primary {
 .diagrams {
     display: flex;
     justify-content: space-between;
-    /* width: 50%; */
 }
 
 .diagram {
@@ -341,7 +354,6 @@ form .btn-primary {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* margin: 0 84px; */
     padding-bottom: 173px;
     width: 50%;
 }
@@ -509,16 +521,6 @@ button {
     font-size: 14px;
 }
 
-/* .create input {
-    width: 397px;
-    margin-bottom: 20px;
-    padding: 7px 0 7px 16px;
-    border: 1px solid #CED4DA;
-    border-radius: 5px;
-    color: #6C757D;
-    font-size: 15px;
-} */
-
 .create .btn-success {
     width: 88px;
     font-family: RobotoMedium, sans-serif;
@@ -593,7 +595,6 @@ button {
 
 .table a {
     margin-right: 10.5px;
-    /* text-decoration: none; */
 }
 
 .names {
@@ -628,10 +629,6 @@ button {
     font-family: RobotoMedium, sans-serif;
     font-size: 15px;
 }
-
-/* .edit-operations .input-group {
-    margin-bottom: 10px;
-} */
 
 .edit-operations .btn {
     margin-top: 10px;
