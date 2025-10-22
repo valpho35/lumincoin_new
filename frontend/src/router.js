@@ -223,6 +223,12 @@ export class Router {
                 VisualUtils.initBootstrap();
             }, 150);
 
+            if (newRoute.useLayout) {
+                setTimeout(() => {
+                    this.layout = new Layout();
+                }, 200);
+            }
+
             if (newRoute.load && typeof newRoute.load === 'function') {
                 newRoute.load();
             }

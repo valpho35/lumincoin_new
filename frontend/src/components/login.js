@@ -52,7 +52,11 @@ export class Login {
                 return;
             }
 
-            AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, { id: result.response.user.id, name: result.response.user.name, lastName: result.response.user.lastName });
+            AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, { 
+                id: result.response.user.id, 
+                name: result.response.user.name, 
+                lastName: result.response.user.lastName 
+            });
 
             this.openNewRoute('/');
         }
