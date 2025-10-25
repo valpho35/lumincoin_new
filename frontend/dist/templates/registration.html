@@ -4,7 +4,7 @@
     </a>
     <form>
         <div class="title">Создайте аккаунт</div>
-        <div id="common-error" class="error invalid-feedback text-center mb-3">Неудалось зарегистрировать пользователя</div>
+        <div id="common-error" class="error invalid-feedback d-none text-center mb-3">Неудалось зарегистрировать пользователя</div>
         <div class="input-group flex-nowrap">
             <span class="input-group-text" id="addon-wrapping"><svg width="16" height="16" viewBox="0 0 16 16"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,7 +16,7 @@
             <input type="text" class="form-control" id="name" placeholder="Имя" aria-label="name"
                 aria-describedby="addon-wrapping">
         </div>
-        <div><span id="name-error" class="error invalid-feedback">Please enter Name</span></div>
+        <div><span id="name-error" class="error invalid-feedback d-none">Please enter Name</span></div>
         <div class="input-group flex-nowrap">
             <span class="input-group-text" id="addon-wrapping"><svg width="16" height="16" viewBox="0 0 16 16"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +28,7 @@
             <input type="text" class="form-control" id="last-name" placeholder="Фамилия" aria-label="lastname"
                 aria-describedby="addon-wrapping">
         </div>
-        <span id="last-name-error" class="error invalid-feedback">Please enter Lastname</span>
+        <span id="last-name-error" class="error invalid-feedback d-none">Please enter Lastname</span>
         <div class="input-group flex-nowrap">
             <span class="input-group-text" id="addon-wrapping"><svg width="14" height="14" viewBox="0 0 14 14"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,7 +40,7 @@
             <input type="email" class="form-control" id="email" placeholder="Электронная почта" aria-label="email"
                 aria-describedby="addon-wrapping">
         </div>
-        <span id="email-error" class="error invalid-feedback">Please enter email address</span>
+        <span id="email-error" class="error invalid-feedback d-none">Please enter email address</span>
         <div class="input-group flex-nowrap">
             <span class="input-group-text" id="addon-wrapping"><svg width="13" height="16" viewBox="0 0 13 16"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +52,7 @@
             <input type="password" class="form-control" id="password" placeholder="Пароль" aria-label="password"
                 aria-describedby="addon-wrapping">
         </div>
-        <span id="password-error" class="error invalid-feedback">Please enter password</span>
+        <span id="password-error" class="error invalid-feedback d-none">Please enter password</span>
         <div class="input-group flex-nowrap">
             <span class="input-group-text" id="addon-wrapping"><svg width="13" height="16" viewBox="0 0 13 16"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +64,7 @@
             <input type="password" class="form-control confirm" id="confirm-password" placeholder="Подтверждение пароля"
                 aria-label="confirm-password" aria-describedby="addon-wrapping">
         </div>
-        <span id="confirm-password-error" class="error invalid-feedback">Passwords must match</span>
+        <span id="confirm-password-error" class="error invalid-feedback d-none">Passwords must match</span>
 
         <div>
             <button class="btn btn-primary" id="process-button">Войти</button>

@@ -19,7 +19,7 @@ export class HttpUtils {
         if (useToken) {
             const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
             if (token) {
-                params.headers['Authoriazaion'] = `Bearer ${token}`;
+                params.headers['Authorization'] = `Bearer ${token}`;
             }
         }
 

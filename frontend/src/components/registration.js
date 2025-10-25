@@ -7,7 +7,6 @@ export class Registration {
         if (AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
             return this.openNewRoute('/login');
         }
-        
 
         this.nameElement = document.getElementById('name');
         this.lastNameElement = document.getElementById('last-name');
@@ -15,6 +14,14 @@ export class Registration {
         this.passwordElement = document.getElementById('password');
         this.confirmPasswordElement = document.getElementById('confirm-password');
         this.commonErrorElement = document.getElementById('common-error');
+
+        this.nameElement.classList.remove('is-invalid');
+        this.lastNameElement.classList.remove('is-invalid');
+        this.emailElement.classList.remove('is-invalid');
+        this.passwordElement.classList.remove('is-invalid');
+        this.confirmPasswordElement.classList.remove('is-invalid');
+        this.commonErrorElement.style.display = 'none';
+
         document.getElementById('process-button').addEventListener('click', this.registration.bind(this));
     }
 
@@ -35,29 +42,30 @@ export class Registration {
             isValid = false;
         }
 
-        if (this.emailElement.value && this.emailElement.value.match(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)) {
+        if (this.emailElement.value &&
+            this.emailElement.value.match(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)) {
             this.emailElement.classList.remove('is-invalid');
         } else {
             this.emailElement.classList.add('is-invalid');
             isValid = false;
         }
 
-        if (this.passwordElement.value && this.passwordElement.value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)) {
+        if (this.passwordElement.value &&
+            this.passwordElement.value.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)) {
             this.passwordElement.classList.remove('is-invalid');
         } else {
             this.passwordElement.classList.add('is-invalid');
             isValid = false;
         }
 
-        if (this.confirmPasswordElement.value && this.confirmPasswordElement.value === this.passwordElement.value) {
+        if (this.confirmPasswordElement.value &&
+            this.confirmPasswordElement.value === this.passwordElement.value) {
             this.confirmPasswordElement.classList.remove('is-invalid');
         } else {
             this.confirmPasswordElement.classList.add('is-invalid');
             isValid = false;
         }
-
         return isValid;
-
     }
 
     async registration(event) {
@@ -72,14 +80,14 @@ export class Registration {
                 passwordRepeat: this.confirmPasswordElement.value,
             });
 
-            if (result.error || !result.response || (result.response && (!result.response.user.id || !result.response.user.name || !result.response.user.lastName || !result.response.user.email))) {
+            if (result.error || !result.response || (result.response &&
+                (!result.response.user.id || !result.response.user.name ||
+                    !result.response.user.lastName || !result.response.user.email))) {
                 this.commonErrorElement.style.display = 'block';
                 return;
             }
 
             this.openNewRoute('/login');
-
-            // AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, { id: result.response.user.id, name: result.response.user.name, lastName: result.response.user.lastName, email: result.response.user.email });
         }
     }
 }

@@ -1,13 +1,13 @@
 <div class="content">
     <div class="edit">
         <div class="income-title">Редактирование категории доходов</div>
-        <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" class="form-control" placeholder="Зарплата" aria-label="Salary"
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Название категории" aria-label="Название категории"
                 aria-describedby="addon-wrapping">
+            <div class="invalid-feedback d-none">
+                Название категории не может быть пустым
+            </div>
         </div>
-
-
         <div class="actions">
             <button class="btn btn-success">Сохранить</button>
             <button class="btn btn-danger">Отмена</button>
