@@ -1,4 +1,4 @@
-import { AuthUtils } from "../utils/auth-utils";
+import { AuthUtils } from "../utils/auth-utils.js";
 
 export class Layout {
     constructor() {

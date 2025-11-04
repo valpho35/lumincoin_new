@@ -2,8 +2,8 @@
     <div class="operations">
         <div class="income-title">Доходы и расходы</div>
         <div class="actions">
-            <button class="btn btn-success">Создать доход</button>
-            <button class="btn btn-danger">Создать расход</button>
+            <button class="btn btn-success" id="create-income-btn">Создать доход</button>
+            <button class="btn btn-danger" id="create-expense-btn">Создать расход</button>
         </div>
         <div class="operations-menu">
             <button class="btn btn-outline-secondary">Сегодня</button>
@@ -25,7 +25,7 @@
                 <tr>
                     <th class="names" scope="col">№ операции</th>
                     <th class="names" scope="col">Тип</th>
-                    <th class="names" scope="col">Категрия</th>
+                    <th class="names" scope="col">Категория</th>
                     <th class="names" scope="col">Сумма</th>
                     <th class="names" scope="col">Дата</th>
                     <th class="names" scope="col">Комментарий</th>
@@ -40,7 +40,7 @@
                     <td>500$</td>
                     <td>11.09.2022</td>
                     <td></td>
-                    <td><a href="#"><svg width="14" height="15" viewBox="0 0 14 15" fill="none"
+                    <td><a href="/edit-operations"><svg width="14" height="15" viewBox="0 0 14 15" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M4.5 5.5C4.77614 5.5 5 5.72386 5 6V12C5 12.2761 4.77614 12.5 4.5 12.5C4.22386 12.5 4 12.2761 4 12V6C4 5.72386 4.22386 5.5 4.5 5.5Z"
@@ -101,15 +101,15 @@
         </table>
     </div>
 
-    <div class="popup-container">
+    <div class="popup-container" id="deleteOperationPopup" style="display: none;">
         <div class="popup">
             <div class="popup-content">
                 <div class="message">
                     Вы действительно хотите удалить операцию?
                 </div>
                 <div class="actions">
-                    <button class="btn btn-success">Да, удалить</button>
-                    <button class="btn btn-danger">Не удалять</button>
+                    <button class="btn btn-success" id="confirmDeleteOperation">Да, удалить</button>
+                    <button class="btn btn-danger" id="cancelDeleteOperation">Не удалять</button>
                 </div>
             </div>
         </div>

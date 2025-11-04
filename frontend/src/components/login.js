@@ -59,7 +59,8 @@ export class Login {
                 email: this.emailElement ? this.emailElement.value : '',
                 password: this.passwordElement ? this.passwordElement.value : '',
                 rememberMe: this.rememberMeElement ? this.rememberMeElement.checked : false
-            });
+            }, false
+        );
 
             if (result.error || !result.response || (result.response &&
                 (!result.response.tokens.accessToken || !result.response.tokens.refreshToken ||

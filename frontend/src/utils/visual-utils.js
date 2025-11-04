@@ -1,5 +1,9 @@
 export class VisualUtils {
     static SidebarMenu(url) {
+        if (url === '/logout') {
+            console.log('SidebarMenu skipped for logout');
+            return;
+        }
         console.log('SidebarMenu called with url:', url);
 
         const collapse = document.querySelector('#categoriesCollapse');
@@ -16,28 +20,63 @@ export class VisualUtils {
                 mainLink.classList.add('active');
             }
 
-            collapse.classList.remove('show');
-            collapseBtn.classList.add('collapsed');
-            collapseBtn.classList.remove('active');
+            if (collapse) collapse.classList.remove('show');
+            if (collapseBtn) {
+                collapseBtn.classList.add('collapsed');
+                collapseBtn.classList.remove('active');
+            }
+
+            // collapse.classList.remove('show');
+            // collapseBtn.classList.add('collapsed');
+            // collapseBtn.classList.remove('active');
 
         } else if (url === '/operations') {
             const operationsLink = document.querySelector('.nav-item a[href="/operations"]');
             if (operationsLink) {
                 operationsLink.classList.add('active');
             }
-        } else if (url === '/income' || url === '/expenses') {
-            collapse.classList.add('show');
-            collapseBtn.classList.add('active');
-            collapseBtn.classList.remove('collapsed');
 
-            const activeLink = document.querySelector(`.nav-item a[href="${url}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active');
+            if (collapse) collapse.classList.remove('show');
+            if (collapseBtn) {
+                collapseBtn.classList.add('collapsed');
+                collapseBtn.classList.remove('active');
+            }
+
+        } else if (url === '/income' || url === '/create-income-cat' || url === '/edit-income-cat') {
+            console.log('Highlighting income category');
+
+            if (collapse) collapse.classList.add('show');
+            if (collapseBtn) {
+                collapseBtn.classList.add('active');
+                collapseBtn.classList.remove('collapsed');
+            }
+
+            const incomeLink = document.querySelector('.nav-item a[href="/income"]');
+            if (incomeLink) {
+                incomeLink.classList.add('active');
+                console.log('Income link highlighted');
             }
         }
+        else if (url === '/expenses' || url === '/create-expense-cat' || url === '/edit-expense-cat') {
+            console.log('Highlighting expenses category');
+
+            if (collapse) collapse.classList.add('show');
+            if (collapseBtn) {
+                collapseBtn.classList.add('active');
+                collapseBtn.classList.remove('collapsed');
+            }
+
+            const expensesLink = document.querySelector('.nav-item a[href="/expenses"]');
+            if (expensesLink) {
+                expensesLink.classList.add('active');
+                console.log('Expenses link highlighted');
+            }
+        }
+
+        console.log('Current active links:', document.querySelectorAll('.nav-link.active'));
     }
 
- static initBootstrap() {
+    static initBootstrap() {
 
         const dropdowns = document.querySelectorAll('.dropdown-toggle');
         dropdowns.forEach(dropdown => {

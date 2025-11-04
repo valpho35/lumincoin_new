@@ -1,5 +1,5 @@
 import { AuthUtils } from "../utils/auth-utils";
-import { HttpUtils } from "../utils/http-utils";
+import { ApiUtils } from "../utils/api-utils.js";
 export class Registration {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
@@ -72,22 +72,31 @@ export class Registration {
         event.preventDefault();
         this.commonErrorElement.style.display = 'none';
         if (this.validateForm()) {
-            const result = await HttpUtils.request('/signup', 'POST', {
-                name: this.nameElement.value,
-                lastName: this.lastNameElement.value,
-                email: this.emailElement.value,
-                password: this.passwordElement.value,
-                passwordRepeat: this.confirmPasswordElement.value,
-            });
+            try {
+                const result = await ApiUtils.request('POST', '/signup', {
+                    body: {
+                        name: this.nameElement.value,
+                        lastName: this.lastNameElement.value,
+                        email: this.emailElement.value,
+                        password: this.passwordElement.value,
+                        passwordRepeat: this.confirmPasswordElement.value,
+                    }
+                }, false);
 
-            if (result.error || !result.response || (result.response &&
-                (!result.response.user.id || !result.response.user.name ||
-                    !result.response.user.lastName || !result.response.user.email))) {
+                if (result.error || !result.response || (result.response &&
+                    (!result.response.user.id || !result.response.user.name ||
+                        !result.response.user.lastName || !result.response.user.email))) {
+                    this.commonErrorElement.style.display = 'block';
+                    return;
+                }
+
+                this.openNewRoute('/login');
+            } catch (error) {
+                console.error('Ошибка регистрации:', error);
                 this.commonErrorElement.style.display = 'block';
-                return;
+                this.commonErrorElement.textContent = 'Ошибка регистрации: ' + (error.message || 'Неизвестная ошибка');
+                this.commonErrorElement.style.display = 'block';
             }
-
-            this.openNewRoute('/login');
         }
     }
 }

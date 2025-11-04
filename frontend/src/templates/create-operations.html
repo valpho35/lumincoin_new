@@ -1,29 +1,24 @@
-<div class="content">
+<!-- <div class="content">
     <div class="create-operations">
         <div class="income-title">Создание дохода/расхода</div>
 
         <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" class="form-control" placeholder="Тип..." aria-label="Type"
                 aria-describedby="addon-wrapping">
         </div>
         <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" class="form-control" placeholder="Категории..." aria-label="Categories"
                 aria-describedby="addon-wrapping">
         </div>
         <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" class="form-control" placeholder="Сумма в $" aria-label="Amount $"
                 aria-describedby="addon-wrapping">
         </div>
         <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" class="form-control" placeholder="Дата..." aria-label="Date"
                 aria-describedby="addon-wrapping">
         </div>
         <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
             <input type="text" class="form-control" placeholder="Комментарий..." aria-label="Comment"
                 aria-describedby="addon-wrapping">
         </div>
@@ -31,5 +26,70 @@
             <button class="btn btn-success">Создать</button>
             <button class="btn btn-danger">Отмена</button>
         </div>
+    </div>
+</div> -->
+
+<div class="content">
+    <div class="create-operations">
+        <div class="income-title" id="operation-title">Создание дохода/расхода</div>
+
+        <form id="operation-form">
+            <!-- Тип операции -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Тип операции *</label>
+                <select class="form-select" id="type" name="type" required>
+                    <option value="income">Доход</option>
+                    <option value="expense">Расход</option>
+                </select>
+            </div>
+
+            <!-- Категория -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Категория *</label>
+                <input type="text" class="form-control" id="category" name="category"
+                    placeholder="Введите название категории" required>
+                <div class="invalid-feedback">
+                    Пожалуйста, введите название категории
+                </div>
+            </div>
+
+            <!-- Сумма -->
+            <div class="mb-3">
+                <label for="amount" class="form-label">Сумма ($) *</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="amount" name="amount" placeholder="0.00" step="0.01"
+                        min="0.01" required>
+                    <span class="input-group-text">$</span>
+                </div>
+                <div class="invalid-feedback">
+                    Сумма должна быть больше 0
+                </div>
+            </div>
+
+            <!-- Дата -->
+            <div class="mb-3">
+                <label for="date" class="form-label">Дата *</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+                <div class="invalid-feedback">
+                    Пожалуйста, выберите дату
+                </div>
+            </div>
+
+            <!-- Комментарий -->
+            <div class="mb-3">
+                <label for="comment" class="form-label">Комментарий</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"
+                    placeholder="Введите комментарий (необязательно)"></textarea>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn btn-success">Создать</button>
+                <button type="button" class="btn btn-danger" id="cancel-btn">Отмена</button>
+                <!-- <a href="/create-operations?type=income" class="btn btn-success">Создать</a>
+                <a href="/create-operations?type=expense" class="btn btn-danger">Отмена</a> -->
+                <!-- <button type="submit" class="btn btn-success">Создать</button>
+                <button type="button" class="btn btn-danger" id="cancel-btn">Отмена</button> -->
+            </div>
+        </form>
     </div>
 </div>

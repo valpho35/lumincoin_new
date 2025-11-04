@@ -1,22 +1,28 @@
 import { AuthUtils } from './auth-utils.js';
+import config from '../config/common-config.js';
 
 export class ApiUtils {
-    static async request(url, options = {}) {
-        const baseUrl = 'http://localhost:3000/api';
-        const fullUrl = baseUrl + url;
+    static async request(method, url, options = {}, useToken = true) {
+        const fullUrl = config.api + url;
 
 
         try {
+            if (!options.headers) {
+                options.headers = {};
+            }
+
+            options.headers['Content-Type'] = 'application/json';
+
             const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
-            options.headers = {
-                'Content-Type': 'application/json',
-                'x-auth-token': token,
-                ...options.headers
-            };
+            if (useToken) {
+                options.headers['x-auth-token'] = token;
+            }
 
             if (options.body) {
                 options.body = JSON.stringify(options.body);
             }
+
+            options.method = method;
 
             const response = await fetch(fullUrl, options);
            
@@ -27,6 +33,21 @@ export class ApiUtils {
             }
 
             if (!response.ok) {
+
+                let errorDetails;
+            try {
+                errorDetails = await response.json();
+            } catch (e) {
+                errorDetails = await response.text();
+            }
+            
+            console.error('Server error response:', {
+                status: response.status,
+                statusText: response.statusText,
+                url: fullUrl,
+                details: errorDetails
+            });
+
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -38,27 +59,27 @@ export class ApiUtils {
         }
     }
 
-    static get(url) {
-        return this.request(url);
-    }
+    // static get(url) {
+    //     return this.request(url);
+    // }
 
-    static post(url, data) {
-        return this.request(url, {
-            method: 'POST',
-            body: data
-        });
-    }
+    // static post(url, data) {
+    //     return this.request(url, {
+    //         method: 'POST',
+    //         body: data
+    //     });
+    // }
     
-    static put(url, data) {
-        return this.request(url, {
-            method: 'PUT',
-            body: data
-        });
-    }
+    // static put(url, data) {
+    //     return this.request(url, {
+    //         method: 'PUT',
+    //         body: data
+    //     });
+    // }
 
-    static delete(url) {
-        return this.request(url, {
-            method: 'DELETE'
-        });
-    }
+    // static delete(url) {
+    //     return this.request(url, {
+    //         method: 'DELETE'
+    //     });
+    // }
 }
