@@ -26,10 +26,6 @@ export class VisualUtils {
                 collapseBtn.classList.remove('active');
             }
 
-            // collapse.classList.remove('show');
-            // collapseBtn.classList.add('collapsed');
-            // collapseBtn.classList.remove('active');
-
         } else if (url === '/operations') {
             const operationsLink = document.querySelector('.nav-item a[href="/operations"]');
             if (operationsLink) {

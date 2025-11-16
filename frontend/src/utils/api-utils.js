@@ -5,16 +5,17 @@ export class ApiUtils {
     static async request(method, url, options = {}, useToken = true) {
         const fullUrl = config.api + url;
 
+        console.log(`API Request: ${method} ${fullUrl}`, options);
 
         try {
-            if (!options.headers) {
-                options.headers = {};
-            }
-
-            options.headers['Content-Type'] = 'application/json';
+            options.method = method;
+            options.headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
 
             const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
-            if (useToken) {
+            if (token) {
                 options.headers['x-auth-token'] = token;
             }
 
@@ -22,64 +23,52 @@ export class ApiUtils {
                 options.body = JSON.stringify(options.body);
             }
 
-            options.method = method;
-
             const response = await fetch(fullUrl, options);
-           
+            if (!response.ok) {
+                let errorDetails;
+                try {
+                    errorDetails = await response.json();
+                } catch (e) {
+                    errorDetails = await response.text();
+                }
+
+                console.error('Server error response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: fullUrl,
+                    details: errorDetails
+                });
+
+            // Редирект на логин при 401
             if (response.status === 401) {
                 AuthUtils.removeAuthInfo();
-                window.location.href = '/login';
-                return;
+                // window.location.href = '/login';
+                // return;
             }
+            if (response.status === 400) {
+                    const errorMessage = errorDetails.message || errorDetails.error || JSON.stringify(errorDetails);
+                    throw new Error(`Ошибка валидации: ${errorMessage}`);
+                }
 
-            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error('Ресурс не найден');
+                }
 
-                let errorDetails;
-            try {
-                errorDetails = await response.json();
-            } catch (e) {
-                errorDetails = await response.text();
-            }
-            
-            console.error('Server error response:', {
-                status: response.status,
-                statusText: response.statusText,
-                url: fullUrl,
-                details: errorDetails
-            });
+                if (response.status >= 500) {
+                    throw new Error('Внутренняя ошибка сервера');
+                }
 
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            const data = await response.json();
-            return data;
+             return await response.json();
 
         } catch (error) {
-            throw new Error('Не удалось подключится к серверу: ' + error.message);
+            console.error('API Request failed:', {
+                method,
+                url: fullUrl,
+                error: error.message
+            });
+            throw error;
         }
     }
-
-    // static get(url) {
-    //     return this.request(url);
-    // }
-
-    // static post(url, data) {
-    //     return this.request(url, {
-    //         method: 'POST',
-    //         body: data
-    //     });
-    // }
-    
-    // static put(url, data) {
-    //     return this.request(url, {
-    //         method: 'PUT',
-    //         body: data
-    //     });
-    // }
-
-    // static delete(url) {
-    //     return this.request(url, {
-    //         method: 'DELETE'
-    //     });
-    // }
 }

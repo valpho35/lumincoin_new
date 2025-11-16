@@ -4,6 +4,8 @@ export class EditOperations {
         this.openNewRoute = openNewRoute;
         this.operationId = new URLSearchParams(window.location.search).get('id');
         this.isEditMode = !!this.operationId;
+        this.categories = [];
+        this.currentOperation = null;
         this.init();
     }
 
@@ -13,33 +15,73 @@ export class EditOperations {
         } else {
             this.setupCreateMode();
         }
+        await this.loadCategories();
         this.setUpEvents();
         this.updateUI();
     }
 
     async loadOperation() {
         try {
-            console.log('Загрузка', this.operationId);
+            // console.log('Загрузка', this.operationId);
             const operation = await ApiUtils.request('GET', `/operations/${this.operationId}`);
+            console.log('Operation data received:', operation);
+
+            this.currentOperation = operation;
 
             this.populateForm(operation);
         } catch (error) {
             console.error('Ошибка загрузки операции:', error);
-            // alert('Не удалось загрузить данные операции');
             this.openNewRoute('/operations');
+        }
+    }
+
+    async loadCategories() {
+        try {
+            const operationType = this.currentOperation ? this.currentOperation.type : this.getOperationTypeFromUrl();
+            const endpoint = operationType === 'income'
+                ? '/categories/income'
+                : '/categories/expense';
+
+            this.categories = await ApiUtils.request('GET', endpoint);
+            this.populateCategorySelect();
+
+        } catch (error) {
+            console.error('Ошибка загрузки категорий:', error);
+            this.populateCategorySelect();
+        }
+    }
+
+    populateCategorySelect() {
+        const categorySelect = document.getElementById('category');
+        if (!categorySelect) return;
+
+        categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+
+        this.categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.title;
+            categorySelect.appendChild(option);
+        });
+
+        if (this.currentOperation) {
+            const categoryId = this.currentOperation.type === 'income'
+                ? this.currentOperation.category_income_id : this.currentOperation.category_expense_id;
+            // categorySelect.value = this.currentOperation.category_id;
+            if (categoryId) {
+                categorySelect.value = categoryId;
+            }
         }
     }
 
     populateForm(operation) {
         const typeSelect = document.getElementById('type');
-        const categoryInput = document.getElementById('category');
         const amountInput = document.getElementById('amount');
         const dateInput = document.getElementById('date');
         const commentInput = document.getElementById('comment');
         const titleElement = document.getElementById('operation-title');
 
         if (typeSelect) typeSelect.value = operation.type || 'income';
-        if (categoryInput) categoryInput.value = operation.category || '';
         if (amountInput) amountInput.value = operation.amount || '';
 
         if (dateInput && operation.date) {
@@ -52,6 +94,11 @@ export class EditOperations {
         if (titleElement) {
             titleElement.textContent = `Редактирование ${operation.type === 'income' ? 'дохода' : 'расхода'}`;
         }
+    }
+
+    getOperationTypeFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('type') || 'income';
     }
 
     setupCreateMode() {
@@ -98,24 +145,68 @@ export class EditOperations {
     }
 
     setupValidation() {
-        const amountInput = document.getElementById('amount');
-        const categoryInput = document.getElementById('category');
-
-        if (amountInput) {
-            amountInput.addEventListener('input', () => {
-                if (amountInput.value && parseFloat(amountInput.value) > 0) {
-                    amountInput.classList.remove('is-invalid');
-                }
+        const form = document.getElementById('operation-form');
+        if (form) {
+            form.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
+                field.addEventListener('input', () => this.validateField(field));
+                field.addEventListener('blur', () => this.validateField(field));
+                field.addEventListener('change', () => this.validateField(field));
             });
         }
+    }
 
-        if (categoryInput) {
-            categoryInput.addEventListener('input', () => {
-                if (categoryInput.value.trim()) {
-                    categoryInput.classList.remove('is-invalid');
+    validateField(field) {
+        field.classList.remove('is-invalid');
+        field.classList.remove('is-valid');
+
+        const value = field.value.trim();
+        let isValid = true;
+
+        switch (field.id) {
+            case 'amount':
+                const numericValue = parseFloat(value);
+                isValid = !isNaN(numericValue) && numericValue > 0;
+                break;
+
+            case 'comment':
+                if (field.hasAttribute('required')) {
+                    isValid = value !== '';
+                } else {
+                    isValid = true;
                 }
-            });
+                break;
+
+            case 'category':
+            case 'type':
+            case 'date':
+                isValid = value !== '';
+                break;
+
+            default:
+                isValid = field.checkValidity();
         }
+
+        if (isValid) {
+            field.classList.remove('is-invalid');
+            field.classList.add('is-valid');
+        } else {
+            field.classList.add('is-invalid');
+            field.classList.remove('is-valid');
+        }
+    }
+
+    validateForm(form) {
+        let isValid = true;
+        // const form = document.getElementById('operation-form');
+
+        form.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
+            this.validateField(field);
+            if (field.classList.contains('is-invalid')) {
+                isValid = false;
+            }
+        });
+
+        return isValid;
     }
 
     updateUI() {
@@ -149,18 +240,29 @@ export class EditOperations {
         e.preventDefault();
 
         const form = e.target;
-        const formData = new FormData(form);
 
-        if (!this.validateForm(formData)) {
+        if (!this.validateForm(form)) {
+            const firstInvalid = form.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
             return;
         }
 
+        const formData = new FormData(form);
+
+        const amount = parseFloat(formData.get('amount'));
+        const categoryId = formData.get('category');
+        const date = formData.get('date');
+        const comment = formData.get('comment');
+        const type = formData.get('type');
+
         const operationData = {
-            type: formData.get('type'),
-            category: formData.get('category').trim(),
-            amount: parseFloat(formData.get('amount')),
-            date: formData.get('date'),
-            comment: formData.get('comment') || ''
+            type: type,
+            amount: amount,
+            date: date,
+            comment: comment || '',
+            category_id: parseInt(categoryId)
         };
 
         try {
@@ -178,41 +280,7 @@ export class EditOperations {
 
         } catch (error) {
             console.error('Ошибка сохранения операции:', error);
-            // alert('Не удалось сохранить операцию.');
+            alert('Ошибка при сохранении операции: ' + (error.message || 'Неизвестная ошибка'));
         }
-    }
-
-    validateForm(formData) {
-        let isValid = true;
-        const amount = parseFloat(formData.get('amount'));
-        const category = formData.get('category').trim();
-        const date = formData.get('date');
-
-        const amountInput = document.getElementById('amount');
-        const categoryInput = document.getElementById('category');
-        const dateInput = document.getElementById('date');
-
-        if (!amount || amount <= 0) {
-            amountInput.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            amountInput.classList.remove('is-invalid');
-        }
-
-        if (!category) {
-            categoryInput.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            categoryInput.classList.remove('is-invalid');
-        }
-
-        if (!date) {
-            dateInput.classList.add('is-invalid');
-            isValid = false;
-        } else {
-            dateInput.classList.remove('is-invalid');
-        }
-
-        return isValid;
     }
 }

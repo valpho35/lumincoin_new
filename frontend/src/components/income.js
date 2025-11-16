@@ -15,6 +15,12 @@ export class Income {
         try {
             const categories = await ApiUtils.request('GET', '/categories/income');
 
+             // Фильтруем дефолтные категории только на странице просмотра
+        const defaultTitles = ['Зарплата', 'Фриланс', 'Инвестиции', 'Подарки'];
+        const filteredCategories = categories.filter(cat => 
+            !defaultTitles.includes(cat.title)
+        );
+
             const container = document.querySelector('.bookmarks');
 
             if (!container) {

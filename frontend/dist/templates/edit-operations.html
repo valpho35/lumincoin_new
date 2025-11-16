@@ -2,13 +2,7 @@
     <div class="edit-operations">
         <div class="income-title" id="operation-title">Редактирование дохода/расхода</div>
 
-         <!-- Информационное сообщение для операций из категорий -->
-        <!-- <div id="prefilled-info" class="alert alert-info d-none">
-            Вы добавляете операцию в выбранную категорию. Категория и тип операции заблокированы для редактирования.
-        </div> -->
-
         <form id="operation-form" class="needs-validation" novalidate>
-            <!-- Тип операции -->
             <div class="mb-3">
                 <label for="type" class="form-label">Тип операции *</label>
                 <select class="form-select" id="type" name="type" required>
@@ -20,30 +14,27 @@
                 </div> -->
             </div>
 
-            <!-- Категория -->
             <div class="mb-3">
                 <label for="category" class="form-label">Категория *</label>
-                <input type="text" class="form-control" id="category" name="category"
-                    placeholder="Введите название категории" required value="">
+                <select class="form-select" id="category" name="category" required>
+                    <option value="">Выберите категорию</option>
+                </select>
                 <div class="invalid-feedback">
-                    Пожалуйста, введите название категории
+                    Пожалуйста, выберите категорию
                 </div>
             </div>
 
-            <!-- Сумма -->
             <div class="mb-3">
                 <label for="amount" class="form-label">Сумма ($) *</label>
                 <div class="input-group">
                     <input type="number" class="form-control" id="amount" name="amount" placeholder="0.00" step="0.01"
                         min="0.01" required>
-                    <span class="input-group-text">$</span>
                 </div>
                 <div class="invalid-feedback">
                     Сумма должна быть больше 0
                 </div>
             </div>
 
-            <!-- Дата -->
             <div class="mb-3">
                 <label for="date" class="form-label">Дата *</label>
                 <input type="date" class="form-control" id="date" name="date" required>
@@ -52,11 +43,13 @@
                 </div>
             </div>
 
-            <!-- Комментарий -->
             <div class="mb-3">
                 <label for="comment" class="form-label">Комментарий</label>
                 <textarea class="form-control" id="comment" name="comment" rows="3"
-                    placeholder="Введите комментарий (необязательно)"></textarea>
+                    placeholder="Введите комментарий" required></textarea>
+                <div class="invalid-feedback">
+                    Необходимо написать комментарий
+                </div>
             </div>
 
             <div class="actions">

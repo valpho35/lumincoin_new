@@ -1,5 +1,5 @@
 import { AuthUtils } from "../utils/auth-utils";
-import { HttpUtils } from "../utils/http-utils";
+import { ApiUtils } from "../utils/api-utils.js";
 
 export class Login {
     constructor(openNewRoute) {
@@ -9,76 +9,140 @@ export class Login {
             return this.openNewRoute('/');
         }
 
+        this.form = document.getElementById('login-form');
+        if (!this.form) {
+            console.error('Login form not found');
+            return;
+        }
+        this.form.addEventListener('submit', this.login.bind(this));
         this.emailElement = document.getElementById('email');
         this.passwordElement = document.getElementById('password');
         this.rememberMeElement = document.getElementById('remember-me');
-        this.commonErrorElement = document.getElementById('common-error');
-
-        this.emailElement.classList.remove('is-invalid');
-        this.passwordElement.classList.remove('is-invalid');
-        this.commonErrorElement.style.display = 'none';
-
-        document.getElementById('process-button').addEventListener('click', this.login.bind(this));
-    }
-
-    validateForm() {
-        let isValid = true;
-
-        if (this.emailElement) {
-            this.emailElement.classList.remove('is-invalid');
-        }
-        if (this.passwordElement) {
-            this.passwordElement.classList.remove('is-invalid');
-        }
-
-        if (this.emailElement && this.emailElement.value &&
-            this.emailElement.value.match(/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/)) {
-        } else if (this.emailElement) {
-            this.emailElement.classList.add('is-invalid');
-            isValid = false;
-        }
-
-        if (this.passwordElement && this.passwordElement.value) {
-        } else if (this.passwordElement) {
-            this.passwordElement.classList.add('is-invalid');
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     async login(event) {
         event.preventDefault();
+        event.stopPropagation();
+        this.clearErrors();
 
-        if (this.commonErrorElement) {
-            this.commonErrorElement.style.display = 'none';
+        const formData = {
+            email: this.emailElement ? this.emailElement.value.trim() : '',
+            password: this.passwordElement ? this.passwordElement.value : ''
+        };
+
+        if (!this.validateForm(formData)) {
+            return;
         }
 
-        if (this.validateForm()) {
-            const result = await HttpUtils.request('/login', 'POST', {
-                email: this.emailElement ? this.emailElement.value : '',
-                password: this.passwordElement ? this.passwordElement.value : '',
-                rememberMe: this.rememberMeElement ? this.rememberMeElement.checked : false
-            }, false
-        );
-
-            if (result.error || !result.response || (result.response &&
-                (!result.response.tokens.accessToken || !result.response.tokens.refreshToken ||
-                    !result.response.user.id || !result.response.user.name ||
-                    !result.response.user.lastName))) {
-                if (this.commonErrorElement) {
-                    this.commonErrorElement.style.display = 'block';
+        try {
+            const result = await ApiUtils.request('POST', '/login', {
+                body: {
+                    email: formData.email,
+                    password: formData.password,
+                    rememberMe: this.rememberMeElement ? this.rememberMeElement.checked : false
                 }
-                return;
+            }, false);
+
+            if (result && result.tokens && result.user) {
+                AuthUtils.setAuthInfo(
+                    result.tokens.accessToken,
+                    result.tokens.refreshToken,
+                    {
+                        id: result.user.id,
+                        name: result.user.name,
+                        lastName: result.user.lastName
+                    }
+                );
+                this.openNewRoute('/');
+            } else {
+                this.showCommonError('Ошибка при входе в систему');
             }
 
-            AuthUtils.setAuthInfo(result.response.tokens.accessToken, result.response.tokens.refreshToken, {
-                id: result.response.user.id,
-                name: result.response.user.name,
-                lastName: result.response.user.lastName
-            });
+        } catch (error) {
+            console.error('Login error:', error);
 
-            this.openNewRoute('/');
+            if (error.message.includes('неверный') || error.message.includes('invalid') ||
+                error.message.includes('401') || error.message.includes('Unauthorized')) {
+                this.showCommonError('Неправильный email или пароль');
+            } else if (error.message.includes('Ошибка валидации')) {
+                this.showCommonError('Проверьте правильность введенных данных');
+            } else {
+                this.showCommonError('Ошибка соединения с сервером');
+            }
         }
+        return false;
+    }
+
+    validateForm(data) {
+        let valid = true;
+
+        if (!data.email) {
+            this.showError('email', 'Введите email');
+            valid = false;
+        } else if (!this.isValidEmail(data.email)) {
+            this.showError('email', 'Введите корректный email');
+            valid = false;
+        }
+
+        if (!data.password) {
+            this.showError('password', 'Введите пароль');
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    showError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+
+        field.classList.add('is-invalid');
+
+        let errorElement = field.parentNode.nextElementSibling;
+        if (!errorElement || !errorElement.classList.contains('error-message')) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'error-message invalid-feedback';
+            field.parentNode.parentNode.appendChild(errorElement);
+        }
+
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+
+    showCommonError(message) {
+        let commonError = document.getElementById('common-error');
+        if (!commonError) {
+            commonError = document.createElement('div');
+            commonError.id = 'common-error';
+            commonError.className = 'alert alert-danger text-center mb-3';
+            this.form.insertBefore(commonError, this.form.firstChild);
+        }
+
+        commonError.textContent = message;
+        commonError.style.display = 'block';
+    }
+
+    setupErrorAutoClose(errorElement) {
+        if (!errorElement.querySelector('.close-error')) {
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.className = 'close-error btn-close float-end';
+            closeButton.setAttribute('aria-label', 'Close');
+            closeButton.onclick = () => errorElement.remove();
+            errorElement.appendChild(closeButton);
+        }
+    }
+
+    clearErrors() {
+        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+        const commonError = document.getElementById('common-error');
+        if (commonError) commonError.remove();
+
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    isValidEmail(email) {
+        return /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(email);
     }
 }

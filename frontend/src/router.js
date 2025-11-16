@@ -201,13 +201,20 @@ export class Router {
     async activateRoute() {
         if (this.isRedirecting) return;
         const urlRoute = window.location.pathname;
+
+        console.log('Current URL:', urlRoute);
+        console.log('Available routes:', this.routes.map(r => r.route));
+
         const newRoute = this.routes.find(item => item.route === urlRoute);
 
         if (!newRoute) {
+             console.log('Route not found, redirecting to login');
             return this.redirectToLogin();
         }
+        console.log('Found route:', newRoute);
 
         const isAuthenticated = this.isAuthenticated();
+        console.log('Is authenticated:', isAuthenticated);
 
         if (newRoute.authRequired && !isAuthenticated) {
             return this.redirectToLogin();
@@ -259,7 +266,7 @@ export class Router {
                 VisualUtils.initBootstrap();
 
                 if (route.useLayout) {
-                    this.layout = new Layout();
+                    this.layout = new Layout(this.openNewRoute.bind(this));
                 }
 
                 if (route.load && typeof route.load === 'function') {
@@ -278,10 +285,11 @@ export class Router {
         console.log('Необходимо авторизоваться!');
 
         if (window.location.pathname !== '/login') {
-            history.replaceState({}, '', '/login');
-            this.loadLoginContent().finally(() => {
-                this.isRedirecting = false;
-            });
+            // history.replaceState({}, '', '/login');
+            // this.openNewRoute('/login').finally(() => {
+            //     this.isRedirecting = false;
+            window.location.href = '/login';
+            
         } else {
             this.isRedirecting = false;
         }
@@ -293,28 +301,12 @@ export class Router {
         this.isRedirecting = true;
 
         if (window.location.pathname !== '/') {
-            history.replaceState({}, '', '/');
-            this.loadHomeContent().finally(() => {
+            // history.replaceState({}, '', '/');
+            this.openNewRoute('/').finally(() => {
                 this.isRedirecting = false;
             });
         } else {
             this.isRedirecting = false;
-        }
-    }
-
-    async loadLoginContent() {
-        const loginRoute = this.routes.find(item => item.route === '/login');
-        if (loginRoute) {
-            await this.loadContent(loginRoute);
-            this.initializeComponent(loginRoute);
-        }
-    }
-
-    async loadHomeContent() {
-        const homeRoute = this.routes.find(item => item.route === '/');
-        if (homeRoute) {
-            await this.loadContent(homeRoute);
-            this.initializeComponent(homeRoute);
         }
     }
 
