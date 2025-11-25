@@ -6,6 +6,7 @@ export class EditOperations {
         this.isEditMode = !!this.operationId;
         this.categories = [];
         this.currentOperation = null;
+        this.operationType = this.getOperationTypeFromUrl();
         this.init();
     }
 
@@ -22,9 +23,7 @@ export class EditOperations {
 
     async loadOperation() {
         try {
-            // console.log('Загрузка', this.operationId);
             const operation = await ApiUtils.request('GET', `/operations/${this.operationId}`);
-            console.log('Operation data received:', operation);
 
             this.currentOperation = operation;
 
@@ -65,9 +64,12 @@ export class EditOperations {
         });
 
         if (this.currentOperation) {
-            const categoryId = this.currentOperation.type === 'income'
-                ? this.currentOperation.category_income_id : this.currentOperation.category_expense_id;
-            // categorySelect.value = this.currentOperation.category_id;
+            let categoryId;
+            if (this.currentOperation.type === 'income') {
+                categoryId = this.currentOperation.category_income_id;
+            } else {
+                categoryId = this.currentOperation.category_expense_id;
+            }
             if (categoryId) {
                 categorySelect.value = categoryId;
             }
@@ -136,12 +138,28 @@ export class EditOperations {
             });
         }
 
-        if (typeSelect) {
-            typeSelect.addEventListener('change', () => {
-                this.updateTitle();
-            });
+        typeSelect.addEventListener('change', async () => {
+            await this.handleTypeChange();
+        });
+    }
+
+    async handleTypeChange() {
+        const typeSelect = document.getElementById('type');
+        if (!typeSelect) return;
+
+        this.operationType = typeSelect.value;
+
+        if (this.isEditMode) {
+            this.currentOperation = null;
         }
-        this.setupValidation();
+
+        await this.loadCategories();
+        this.updateTitle();
+
+        const categorySelect = document.getElementById('category');
+        if (categorySelect) {
+            categorySelect.value = "";
+        }
     }
 
     setupValidation() {
@@ -197,7 +215,6 @@ export class EditOperations {
 
     validateForm(form) {
         let isValid = true;
-        // const form = document.getElementById('operation-form');
 
         form.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
             this.validateField(field);
@@ -205,7 +222,6 @@ export class EditOperations {
                 isValid = false;
             }
         });
-
         return isValid;
     }
 
@@ -276,11 +292,21 @@ export class EditOperations {
                 });
             }
 
+            await this.refreshBalance();
+
             this.openNewRoute('/operations');
 
         } catch (error) {
             console.error('Ошибка сохранения операции:', error);
-            alert('Ошибка при сохранении операции: ' + (error.message || 'Неизвестная ошибка'));
+        }
+    }
+
+     async refreshBalance() {
+        try {
+            const { Layout } = await import("../components/layout.js");
+            await Layout.refreshBalance();
+        } catch (error) {
+            console.error('Ошибка обновления баланса:', error);
         }
     }
 }

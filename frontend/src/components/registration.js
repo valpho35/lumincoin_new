@@ -94,7 +94,6 @@ export class Registration {
             this.showError('confirm-password', 'Пароли не совпадают');
             valid = false;
         }
-
         return valid;
     }
 
@@ -158,86 +157,5 @@ export class Registration {
 
     isValidPassword(password) {
         return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(password);
-    }
-
-    async register(event) {
-        event.preventDefault();
-        this.clearErrors();
-
-        const formData = {
-            name: document.getElementById('name').value.trim(),
-            lastName: document.getElementById('last-name').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            password: document.getElementById('password').value,
-            confirmPassword: document.getElementById('confirm-password').value
-        };
-
-        if (!this.validateForm(formData)) {
-            return;
-        }
-
-        try {
-            const result = await ApiUtils.request('POST', '/signup', {
-                body: {
-                    name: formData.name,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                    password: formData.password,
-                    passwordRepeat: formData.confirmPassword
-                }
-            }, false);
-
-            if (result && result.user) {
-                await this.createDefaultCategories();
-
-                alert('Регистрация успешна! Теперь войдите в систему.');
-                this.openNewRoute('/login');
-            }
-
-        } catch (error) {
-            console.error('Registration error:', error);
-
-            if (error.message.includes('User with given email already exist')) {
-                this.showError('email', 'Этот email уже зарегистрирован');
-                this.showCommonError('Этот email уже зарегистрирован. Используйте другой email или войдите в существующий аккаунт.');
-            } else {
-                this.showCommonError('Ошибка соединения с сервером');
-            }
-        }
-    }
-
-    async createDefaultCategories() {
-        const defaultIncomeCategories = [
-            'Зарплата',
-            'Фриланс',
-            'Инвестиции',
-            'Подарки'
-        ];
-
-        const defaultExpenseCategories = [
-            'Еда',
-            'Транспорт',
-            'Жилье',
-            'Развлечения',
-            'Здоровье'
-        ];
-
-        try {
-            for (const title of defaultIncomeCategories) {
-                await ApiUtils.request('POST', '/categories/income', {
-                    body: { title: title }
-                });
-            }
-
-            for (const title of defaultExpenseCategories) {
-                await ApiUtils.request('POST', '/categories/expense', {
-                    body: { title: title }
-                });
-            }
-
-            console.log('Категории по умолчанию созданы для нового пользователя');
-        } catch (error) {
-            console.error('Ошибка создания категорий:', error);
-        }
     }
 }

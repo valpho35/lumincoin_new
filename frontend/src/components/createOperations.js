@@ -34,32 +34,6 @@ export class CreateOperations {
         }
     }
 
-    async createDefaultCategories() {
-        const defaultIncomeCategories = ['Зарплата', 'Фриланс', 'Инвестиции', 'Подарки'];
-        const defaultExpenseCategories = ['Еда', 'Транспорт', 'Жилье', 'Развлечения', 'Здоровье'];
-
-        const categoriesToCreate = this.operationType === 'income'
-            ? defaultIncomeCategories
-            : defaultExpenseCategories;
-
-        console.log('Создаем категории:', categoriesToCreate);
-
-        for (const title of categoriesToCreate) {
-            try {
-                const endpoint = this.operationType === 'income'
-                    ? '/categories/income'
-                    : '/categories/expense';
-
-                await ApiUtils.request('POST', endpoint, {
-                    body: { title: title }
-                });
-                console.log(`Категория "${title}" создана`);
-            } catch (error) {
-                console.error(`Ошибка создания категории "${title}":`, error);
-            }
-        }
-    }
-
     populateCategorySelect() {
         const select = document.getElementById('category');
         if (!select) return;
@@ -77,13 +51,14 @@ export class CreateOperations {
     setUpEvents() {
         const form = document.getElementById('operation-form');
         const cancelBtn = document.getElementById('cancel-btn');
+        const typeSelect = document.getElementById('type');
 
         if (form) {
             form.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
                 field.addEventListener('input', () => this.validateField(field));
                 field.addEventListener('blur', () => this.validateField(field));
-                field.addEventListener('change', () => this.validateField(field)); // Добавляем change
-        });
+                field.addEventListener('change', () => this.validateField(field));
+            });
 
             form.addEventListener('submit', (e) => this.createOperations(e));
         }
@@ -94,9 +69,32 @@ export class CreateOperations {
             });
         }
 
+        if (typeSelect) {
+            typeSelect.addEventListener('change', () => {
+                this.handleTypeChange();
+            });
+        }
+
         const dateInput = document.getElementById('date');
         if (dateInput) {
             dateInput.value = new Date().toISOString().split('T')[0];
+        }
+    }
+
+    async handleTypeChange() {
+        const typeSelect = document.getElementById('type');
+        if (!typeSelect) return;
+
+        this.operationType = typeSelect.value;
+        await this.loadCategories();
+        this.updateTitle();
+    }
+
+    updateTitle() {
+        const titleElement = document.getElementById('operation-title');
+        if (titleElement) {
+            const type = this.operationType === 'income' ? 'дохода' : 'расхода';
+            titleElement.textContent = `Создание ${type}`;
         }
     }
 
@@ -187,15 +185,27 @@ export class CreateOperations {
             category_id: parseInt(categoryId)
         };
 
+        
+
         try {
             await ApiUtils.request('POST', '/operations', {
                 body: operationData
             });
 
+            await this.refreshBalance();
+
             this.openNewRoute('/operations');
         } catch (error) {
             console.error('Ошибка:', error);
-            alert('Ошибка при создании операции: ' + (error.message || 'Неизвестная ошибка'));
+        }
+    }
+
+    async refreshBalance() {
+        try {
+            const { Layout } = await import("../components/layout.js");
+            await Layout.refreshBalance();
+        } catch (error) {
+            console.error('Ошибка обновления баланса:', error);
         }
     }
 }

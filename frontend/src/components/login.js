@@ -11,7 +11,7 @@ export class Login {
 
         this.form = document.getElementById('login-form');
         if (!this.form) {
-            console.error('Login form not found');
+            // console.error('Login form not found');
             return;
         }
         this.form.addEventListener('submit', this.login.bind(this));
@@ -88,7 +88,6 @@ export class Login {
             this.showError('password', 'Введите пароль');
             valid = false;
         }
-
         return valid;
     }
 

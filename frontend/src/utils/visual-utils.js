@@ -1,7 +1,6 @@
 export class VisualUtils {
     static SidebarMenu(url) {
         if (url === '/logout') {
-            console.log('SidebarMenu skipped for logout');
             return;
         }
         console.log('SidebarMenu called with url:', url);
