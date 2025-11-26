@@ -1,13 +1,15 @@
 <div class="content">
     <div class="create">
         <div class="income-title">Создание категории доходов</div>
-        <div class="input-group flex-nowrap">
-            <!-- <span class="input-group-text" id="addon-wrapping">@</span> -->
-            <input type="text" class="form-control" placeholder="Название..." aria-label="Name category..."
-                aria-describedby="addon-wrapping">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Введите название категории"
+                aria-label="Название категории" aria-describedby="addon-wrapping">
+            <div class="invalid-feedback d-none">
+                Название категории не может быть пустым
+            </div>
         </div>
         <div class="actions">
-            <button class="btn btn-success">Создать</button>
+            <button class="btn btn-success" onclick="location.href='/create-create-operations?type=income'">Создать</button>
             <button class="btn btn-danger">Отмена</button>
         </div>
     </div>

@@ -2,7 +2,7 @@ import config from "../config/common-config";
 import { AuthUtils } from "./auth-utils.js";
 
 export class HttpUtils {
-    static async request(url, method = 'GET', body = null, useToken) {
+    static async request(url, method = 'GET', body = null, useToken = true) {
         const result = {
             error: false,
             response: null
@@ -15,6 +15,13 @@ export class HttpUtils {
                 'Accept': 'applicaion/json',
             },
         };
+
+        if (useToken) {
+            const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
+            if (token) {
+                params.headers['Authorization'] = `Bearer ${token}`;
+            }
+        }
 
         if (body) {
             params.body = JSON.stringify(body);
@@ -40,13 +47,6 @@ export class HttpUtils {
         }
 
         return result;
-    }
-
-    if(useToken) {
-        const token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
-        if (token) {
-            params.headers['Authoriazaion'] = `Bearer ${token}`;
-        }
     }
 
     static handleUnauthorized() {

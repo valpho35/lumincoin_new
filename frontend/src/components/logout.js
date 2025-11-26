@@ -1,6 +1,5 @@
 import { AuthUtils } from "../utils/auth-utils";
-import { HttpUtils } from "../utils/http-utils";
-
+import { ApiUtils } from "../utils/api-utils.js";
 export class Logout {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
@@ -12,8 +11,10 @@ export class Logout {
 
         if (refreshToken) {
             try {
-                await HttpUtils.request('/logout', 'POST', {
+                await ApiUtils.request('POST', '/logout', {
+                    body: {
                     refreshToken: refreshToken,
+                    }
                 });
             } catch (error) {
             }
@@ -24,16 +25,3 @@ export class Logout {
         this.openNewRoute('/login');
     }
 }
-
-
-// export class Logout {
-//     constructor(openNewRoute) {
-//         this.openNewRoute = openNewRoute;
-//         this.logout();
-//     }
-
-//     logout() {
-//         AuthUtils.removeAuthInfo();
-//         this.openNewRoute('/login');
-//     }
-// }
