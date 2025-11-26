@@ -213,20 +213,46 @@ export class Router {
         }
         console.log('Found route:', newRoute);
 
-        const isAuthenticated = this.isAuthenticated();
-        console.log('Is authenticated:', isAuthenticated);
+        // const isAuthenticated = this.isAuthenticated();
+        // console.log('Is authenticated:', isAuthenticated);
 
-        if (newRoute.authRequired && !isAuthenticated) {
-            return this.redirectToLogin();
-        }
+        // if (newRoute.authRequired && !isAuthenticated) {
+        //     return this.redirectToLogin();
+        // }
 
-        if ((urlRoute === '/login' || urlRoute === '/registration') && isAuthenticated) {
-            return this.redirectToHome();
+        // if ((urlRoute === '/login' || urlRoute === '/registration') && isAuthenticated) {
+        //     return this.redirectToHome();
+        // }
+
+         // Проверяем аутентификацию перед загрузкой любого маршрута
+        const authCheckResult = await this.checkAuthentication(newRoute);
+        if (!authCheckResult.canProceed) {
+            return; // Редирект уже выполнен
         }
 
         await this.loadContent(newRoute);
-
         this.initializeComponent(newRoute);
+    }
+
+    async checkAuthentication(route) {
+        const isAuthenticated = this.isAuthenticated();
+        const isAuthPage = route.route === '/login' || route.route === '/registration';
+
+        // Если маршрут требует авторизации, но пользователь не авторизован
+        if (route.authRequired && !isAuthenticated) {
+            console.log('Route requires authentication, redirecting to login');
+            this.redirectToLogin();
+            return { canProceed: false };
+        }
+
+        // Если пользователь авторизован, но пытается попасть на страницы логина/регистрации
+        if (isAuthenticated && isAuthPage) {
+            console.log('User is authenticated, redirecting from auth page to home');
+            this.redirectToHome();
+            return { canProceed: false };
+        }
+
+        return { canProceed: true };
     }
 
     async loadContent(route) {
@@ -285,13 +311,22 @@ export class Router {
         console.log('Необходимо авторизоваться!');
 
         if (window.location.pathname !== '/login') {
-            // history.replaceState({}, '', '/login');
-            // this.openNewRoute('/login').finally(() => {
-            //     this.isRedirecting = false;
-            window.location.href = '/login';
+            history.replaceState({}, '', '/login');
+            this.loadLoginPage().finally(() => {
+                this.isRedirecting = false;
+            // window.location.href = '/login';
+            });
             
         } else {
             this.isRedirecting = false;
+        }
+    }
+
+    async loadLoginPage() {
+        const loginRoute = this.routes.find(item => item.route === '/login');
+        if (loginRoute) {
+            await this.loadContent(loginRoute);
+            this.initializeComponent(loginRoute);
         }
     }
 

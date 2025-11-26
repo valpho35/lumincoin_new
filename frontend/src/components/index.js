@@ -16,7 +16,7 @@ export class Index {
         this.setUpEvents();
     }
 
-    // setUpEvents() {
-    //     console.log('Главная страница инициализирована');
-    // }
+    setUpEvents() {
+        console.log('Главная страница инициализирована');
+    }
 }
