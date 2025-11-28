@@ -5,12 +5,12 @@
 
 @font-face {
     font-family: 'Roboto';
-    src: url(/static/fonts/Roboto.woff);
+    src: url('/static/fonts/Roboto.woff');
 }
 
 @font-face {
     font-family: 'RobotoMedium';
-    src: url(/static/fonts/Robotomedium.woff);
+    src: url('/static/fonts/Robotomedium.woff');
 }
 
 body {
@@ -258,7 +258,7 @@ a {
 
 .input-group {
     width: 397px;
-    height: 38px;
+    /* height: 38px; */
     margin-bottom: 0;
 }
 
